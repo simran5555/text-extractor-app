@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tesseract OCR Example</title>
+    <script src="https://cdn.jsdelivr.net/npm/tesseract.js@4/dist/tesseract.min.js"></script>
+</head>
+<body>
+    <h1>Extract Text</h1>
+    <input type="file" id="fileInput" accept=".png">
+    <button id="extractButton">Extract Text</button>
+    <pre id="output"></pre>
+
+    <script>
+        document.getElementById('extractButton').addEventListener('click', function() {
+            const fileInput = document.getElementById('fileInput');
+            const file = fileInput.files[0];
+            if (file) {
+                extractTextFromPDF(file);
+            } else {
+                alert('Please select a file first');
+            }
+        });
+
+        async function extractTextFromPDF(file) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                Tesseract.recognize(
+                    event.target.result,
+                    'eng',
+                    {
+                        logger: m => console.log(m)
+                    }
+                ).then(({ data: { text } }) => {
+                    document.getElementById('output').textContent = text;
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    </script>
+</body>
+</html>
